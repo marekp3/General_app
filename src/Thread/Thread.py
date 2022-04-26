@@ -1,10 +1,11 @@
 import time
 from tkinter import W
 import matplotlib.pyplot as plt
+from Shared.type_defs import My_Queues
 
 class Thread:
-    def __init__(self, queues, status, timeout, loop_start_time, loop_stop_time, state):
-        self.queues = queues
+    def __init__(self, com, status, timeout, loop_start_time, loop_stop_time, state):
+        self.com = com
         self.status = status
         self.timeout = timeout
         self.loop_start_time = loop_start_time
@@ -17,13 +18,13 @@ class Thread:
     def read_decide(self, command, data):
         pass
     def read(self):
-        try:
-            messege = self.queues[self.__class__.__name__].get_nowait()
-            command = messege[0]
-            data = messege[1]
-        except:
-            command = 'EMPTY'
-            data = []
+        name = self.__class__.__name__
+        if name == 'sm_class':
+            messege = self.com.dequeue(My_Queues.SM) 
+        elif name == 'acq_class':
+            messege = self.com.dequeue(My_Queues.ACQ) 
+        command = messege[0]
+        data = messege[1]
         self.read_decide(command, data)
 
     def process(self):

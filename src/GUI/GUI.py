@@ -3,15 +3,31 @@ import PySimpleGUI as sg
 import os
 import sys
 import time
-from src.GUI.GUI_functions import switch_tab
+from GUI.GUI_functions import switch_tab
+from Shared.type_defs import My_Queues
 path = os.path.dirname(os.path.dirname( __file__ ))
 sys.path.insert(0,str(path))
+from matplotlib.backends.backend_tkagg import FigureCanvasTkAgg
 
+_VARS = {'window': False,
+	 'fig_agg': False,
+	 'pltFig' : False,
+	 'dataSize': 60}
+
+def draw_figure(canvas, figure):
+    figure_canvas_agg = FigureCanvasTkAgg(figure, canvas)
+    figure_canvas_agg.draw()
+    figure_canvas_agg.get_tk_widget().pack(side='top', fill='both', expand=1)
+    return figure_canvas_agg
+
+AppFont = 'Any 16'
+SliderFont = 'Any 14'
+sg.theme('black')
 
 class gui_class:
-    def __init__(self, queues, timeout):
+    def __init__(self, com, timeout):
         self.timeout = timeout
-        self.queues = queues
+        self.com = com
  
     def main(self):
 
@@ -47,7 +63,7 @@ class gui_class:
         while True:
             print("Jestem w GUI")
             try:
-                messege = self.queues['gui_class'].get_nowait()
+                messege = self.com.dequeue(My_Queues.GUI)
                 command = messege[0]
                 data = messege[1]
             except:
@@ -60,15 +76,15 @@ class gui_class:
 
             event, values = window.read(timeout = self.timeout)
             if event == sg.WIN_CLOSED or event == 'Exit':
-                self.queues["sm_class"].put(['EXIT',[]])
-                self.queues["acq_class"].put(['EXIT',[]])
-                self.queues['gui_class'].close()
+                self.com.enqueue(My_Queues.SM,'EXIT',[])
+                self.com.enqueue(My_Queues.ACQ,'EXIT',[])
+                self.com.close(My_Queues.GUI)
                 break
             switch_tab(event, window) #Switch TAB with use of Buttons
             if event == 'Start_ACQ':
                 print('START_ACQ')
-                self.queues["sm_class"].put(['START_ACQ',[]])
+                self.com.enqueue(My_Queues.SM,'START_ACQ',[])
             elif event == 'Stop':
-                self.queues['sm_class'].put(['STOP_ACQ',[]])
+                self.com.enqueue(My_Queues.SM,'STOP_ACQ',[])
             time.sleep(self.timeout)
         window.close()
