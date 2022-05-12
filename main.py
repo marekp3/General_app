@@ -9,9 +9,9 @@ com = Communication()
 
 
 
-sm = sm_class(com, False, 0.1 , 0, 0, 'IDLE')
-acq = acq_class(com, False, 0.1, 0, 0, 'IDLE')
-gui = gui_class(com, 0.1)
+sm = sm_class(com, False, 0.01 , 0, 0, 'IDLE')
+acq = acq_class(com, False, 0.01, 0, 0, 'IDLE')
+gui = gui_class(com, 0.01)
 
 if __name__ == '__main__':
     sm_pr = Process(target=sm.main, args =())

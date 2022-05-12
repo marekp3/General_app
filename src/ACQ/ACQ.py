@@ -1,3 +1,5 @@
+from numpy.random import rand
+values = rand(100)
 import sys
 import os
 from tkinter import W
@@ -26,7 +28,6 @@ class acq_class(Thread):
 
     def process(self):
         if self.state =='ACQ':
-            self.com.enqueue(My_Queues.SM,'NEW_DATA', [1,2,3,4,5,6,7,8,9,10])
-            print("data feed")
+            self.com.enqueue(My_Queues.SM,'NEW_DATA', values)
         elif self.state =='IDLE':
             pass

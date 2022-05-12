@@ -19,7 +19,6 @@ class sm_class(Thread):
         elif command == 'STOP_ACQ':
             self.com.enqueue(My_Queues.ACQ,'STOP_ACQ',[])
         elif command == 'NEW_DATA':
-            print(data)
             self.com.enqueue(My_Queues.GUI,'NEW_DATA',data)
         else:
             print(self.__class__.__name__ + "nie rozumie kokendy: ", command)
